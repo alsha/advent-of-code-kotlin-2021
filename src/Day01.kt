@@ -1,11 +1,11 @@
 fun main() {
     fun part1(input: List<String>): Int {
-        return input.map { it.toInt() }.windowed(2,1).filter { it[1] > it[0] }.size
+        return input.map { it.toInt() }.windowed(2, 1).filter { it[1] > it[0] }.size
     }
 
     fun part2(input: List<String>): Int {
-        return input.map { it.toInt() }.windowed(3,1)
-            .map { it.sum() }.windowed(2,1).filter { it[1] > it[0] }.size
+        return input.map { it.toInt() }.windowed(3, 1)
+            .map { it.sum() }.windowed(2, 1).filter { it[1] > it[0] }.size
     }
 
     // test if implementation meets criteria from the description, like:
