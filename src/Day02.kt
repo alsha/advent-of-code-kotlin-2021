@@ -9,19 +9,19 @@ fun main() {
     fun part2(input: List<String>): Int {
         var aim = 0
         var depth = 0
-        var xcoord = 0
+        var horizontalPosition = 0
         input.map { it.split(" ") }.forEach {
-            val intValue = it[1].toInt()
+            val x = it[1].toInt()
             when (it[0]) {
-                "up" -> aim -= intValue
-                "down" -> aim += intValue
+                "up" -> aim -= x
+                "down" -> aim += x
                 "forward" -> {
-                    xcoord += intValue
-                    depth += intValue * aim
+                    horizontalPosition += x
+                    depth += x * aim
                 }
             }
         }
-        return depth * xcoord
+        return depth * horizontalPosition
     }
 
     // test if implementation meets criteria from the description, like:
