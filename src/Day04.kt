@@ -1,19 +1,5 @@
 fun main() {
 
-    fun getNewBoardWithMarkeNumber(
-        board: List<List<Pair<Int, Boolean>>>,
-        drawnNumber: Int
-    ): List<List<Pair<Int, Boolean>>> {
-        return board.map { row -> row.map { pair -> if (pair.first == drawnNumber) Pair(pair.first, true) else pair } }
-    }
-
-    fun hasFilledRow(board: List<List<Pair<Int, Boolean>>>): Boolean =
-        board.map { row -> row.count { pair -> pair.second } }.any { it == 5 }
-
-    fun hasFilledCol(board: List<List<Pair<Int, Boolean>>>): Boolean =
-        hasFilledRow((0..4).map { colNum -> board.map { row -> row[colNum] } })
-
-
     fun getInputNumbers(input: List<String>) = input[0].split(",").map { it.toInt() }
 
     fun getInputBoards(input: List<String>) =
@@ -23,6 +9,24 @@ fun main() {
                     oneLine.trim().split("\\s+".toRegex()).map { Pair(it.toInt(), false) }
                 }
             }
+
+    fun getNewBoardWithMarkeNumber(
+        board: List<List<Pair<Int, Boolean>>>,
+        numberToMark: Int
+    ): List<List<Pair<Int, Boolean>>> {
+        return board.map { row -> row.map { pair -> if (pair.first == numberToMark) Pair(pair.first, true) else pair } }
+    }
+
+    fun hasFilledRow(board: List<List<Pair<Int, Boolean>>>): Boolean =
+        board.map { row -> row.count { pair -> pair.second } }.any { it == 5 }
+
+    fun hasFilledCol(board: List<List<Pair<Int, Boolean>>>): Boolean =
+        hasFilledRow(transpose(board))
+
+    fun calcBoardScore(
+        winBoard: List<List<Pair<Int, Boolean>>>,
+        drawnNumber: Int
+    ) = winBoard.flatMap { row -> row.filter { !it.second } }.sumOf { it.first } * drawnNumber
 
     fun part1(input: List<String>): Int {
         val numbers = getInputNumbers(input)
@@ -36,7 +40,7 @@ fun main() {
                 .firstOrNull { board -> hasFilledRow(board) || hasFilledCol(board) }
 
             if (winBoard != null) {
-                return winBoard.flatMap { row -> row.filter { !it.second } }.sumOf { it.first } * drawnNumber
+                return calcBoardScore(winBoard, drawnNumber)
             }
         }
         return -1
@@ -62,7 +66,7 @@ fun main() {
                 lastWinBoardIndex = boards.indexOf(lastWinBoard)
             } else if (winBoardsCount == boards.size) {
                 if (lastWinBoardIndex != -1) {
-                    return boards[lastWinBoardIndex].flatMap { row -> row.filter { !it.second } }.sumOf { it.first } * drawnNumber
+                    return calcBoardScore(boards[lastWinBoardIndex], drawnNumber)
                 }
             }
         }
