@@ -24,9 +24,12 @@ fun main() {
         hasFilledRow(transpose(board))
 
     fun calcBoardScore(
-        winBoard: List<List<Pair<Int, Boolean>>>,
-        drawnNumber: Int
-    ) = winBoard.flatMap { row -> row.filter { !it.second } }.sumOf { it.first } * drawnNumber
+        board: List<List<Pair<Int, Boolean>>>,
+        winNumber: Int
+    ) = board.flatMap { row -> row.filter { !it.second } }.sumOf { it.first } * winNumber
+
+    fun isWon(board: List<List<Pair<Int, Boolean>>>) =
+        hasFilledRow(board) || hasFilledCol(board)
 
     fun part1(input: List<String>): Int {
         val numbers = getInputNumbers(input)
@@ -36,11 +39,11 @@ fun main() {
             boards
                 .map { board -> getNewBoardWithMarkeNumber(board, drawnNumber) }
                 .also { boards = it }
-            val winBoard = boards
-                .firstOrNull { board -> hasFilledRow(board) || hasFilledCol(board) }
+            val wonBoard = boards
+                .firstOrNull { board -> isWon(board) }
 
-            if (winBoard != null) {
-                return calcBoardScore(winBoard, drawnNumber)
+            if (wonBoard != null) {
+                return calcBoardScore(wonBoard, drawnNumber)
             }
         }
         return -1
@@ -49,24 +52,24 @@ fun main() {
     fun part2(input: List<String>): Int {
         val numbers = getInputNumbers(input)
         var boards = getInputBoards(input)
-        var lastWinBoardIndex = -1;
+        var lastWonBoardIndex = -1;
 
         for (drawnNumber in numbers) {
             boards
                 .map { board -> getNewBoardWithMarkeNumber(board, drawnNumber) }
                 .also { boards = it }
 
-            val winBoardsCount = boards
-                .filter { board -> hasFilledRow(board) || hasFilledCol(board) }
+            val wonBoardsCount = boards
+                .filter { board -> isWon(board) }
                 .count()
 
-            if (winBoardsCount == boards.size - 1) {
+            if (wonBoardsCount == boards.size - 1) {
                 val lastWinBoard = boards
-                    .firstOrNull { board -> !(hasFilledRow(board) || hasFilledCol(board)) }
-                lastWinBoardIndex = boards.indexOf(lastWinBoard)
-            } else if (winBoardsCount == boards.size) {
-                if (lastWinBoardIndex != -1) {
-                    return calcBoardScore(boards[lastWinBoardIndex], drawnNumber)
+                    .firstOrNull { board -> !isWon(board) }
+                lastWonBoardIndex = boards.indexOf(lastWinBoard)
+            } else if (wonBoardsCount == boards.size) {
+                if (lastWonBoardIndex != -1) {
+                    return calcBoardScore(boards[lastWonBoardIndex], drawnNumber)
                 }
             }
         }
