@@ -14,51 +14,43 @@ fun main() {
         return gamma * epsilon
     }
 
-    fun mostCommonAt(input: List<String>, position: Int): Char {
-        val eachCount = input.map { it[position] }.groupingBy { it }.eachCount()
+    fun eachCount(
+        input: List<String>,
+        position: Int
+    ) = input.map { it[position] }.groupingBy { it }.eachCount()
 
+    fun mostCommonAt(input: List<String>, position: Int): Char {
+        val eachCount = eachCount(input, position)
+        if (eachCount.size == 1) return eachCount.keys.first()
         return if (eachCount.getOrDefault('1', 0) >= eachCount.getOrDefault('0', 0)) '1' else '0'
     }
 
     fun leastCommonAt(input: List<String>, position: Int): Char {
-        val eachCount = input.map { it[position] }.groupingBy { it }.eachCount()
-
+        val eachCount = eachCount(input, position)
+        if (eachCount.size == 1) return eachCount.keys.first()
         return if (eachCount.getOrDefault('1', 0) < eachCount.getOrDefault('0', 0)) '1' else '0'
     }
 
-    fun part2(input: List<String>): Int {
+    fun filter(
+        input: List<String>,
+        commonFunc: (List<String>, Int) -> Char
+    ): Int {
         val cols = input[0].length
 
         var filteredInput = input;
         //println(filteredInput)
-        run loop@{
-            (0 until cols).forEach { index ->
-                val c = mostCommonAt(filteredInput, index)
-                filteredInput = filteredInput.filter { it[index] == c }
-                //println("$c: $filteredInput")
-                if (filteredInput.size == 1) {
-                    return@loop
-                }
-            }
+        (0 until cols).forEach { index ->
+            val c = commonFunc(filteredInput, index)
+            filteredInput = filteredInput.filter { it[index] == c }
+            //println("$c: $filteredInput")
         }
         //println(filteredInput)
-        val oxygen = filteredInput.joinToString(separator = "").toInt(2)
+        return filteredInput.joinToString(separator = "").toInt(2)
+    }
 
-        filteredInput = input;
-        run loop@{
-            (0 until cols).forEach { index ->
-                val c = leastCommonAt(filteredInput, index)
-                //println("$index: $c")
-                filteredInput = filteredInput.filter { it[index] == c }
-                //println("$c: $filteredInput")
-                if (filteredInput.size == 1) {
-                    return@loop
-                }
-            }
-        }
-        //println(filteredInput)
-        val co2 = filteredInput.joinToString(separator = "").toInt(2)
-
+    fun part2(input: List<String>): Int {
+        val oxygen = filter(input) { input, position -> mostCommonAt(input, position) }
+        val co2 = filter(input) { input, position -> leastCommonAt(input, position) }
         return oxygen * co2
     }
 
