@@ -3,9 +3,9 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
 
-    data class Point(val x: Int, val y: Int) {}
+    data class Point(val x: Int, val y: Int)
 
-    data class Line(val start: Point, val end: Point) {}
+    data class Line(val start: Point, val end: Point)
 
     fun isLineVertical(line: Line) =
         line.start.x == line.end.x
@@ -52,12 +52,10 @@ fun main() {
             allPoints = allPoints.plus(pointsOfAllDiagonalLines)
         }
 
-        val result = allPoints
+        return allPoints
             .groupingBy { it }
             .eachCount()
             .filter { it.value > 1 }.size
-
-        return result
     }
 
 
