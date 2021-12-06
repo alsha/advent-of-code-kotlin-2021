@@ -3,33 +3,24 @@ import kotlin.system.measureTimeMillis
 
 fun main() {
 
-    data class FishGroup(var timer: Int, val count: BigInteger) {
-        fun nextDay(): FishGroup? {
-            if (this.timer == 0) {
-                this.timer = 6
-                return FishGroup(8, count)
+    data class FishGroup(val timer: Int, val count: BigInteger) {
+        fun nextDay(): List<FishGroup> {
+            return if (this.timer == 0) {
+                listOf(FishGroup(6, count), FishGroup(8, count))
+            } else {
+                listOf(FishGroup(this.timer - 1, count))
             }
-            this.timer--
-            return null
         }
     }
 
-    fun compactGroups(fishGroups: MutableList<FishGroup>): MutableList<FishGroup> {
-        return fishGroups
-            .groupBy { it.timer }.map { FishGroup(it.key, it.value.sumOf { group -> group.count }) }
-            .toMutableList()
-    }
-
-    fun getNewGroups(fishGroups: MutableList<FishGroup>) = fishGroups.mapNotNull { it.nextDay() }
-
     fun calc(input: List<String>, days: Int): BigInteger {
         var fishGroups = input.first().split(",").map { it.toInt() }.groupingBy { it }.eachCount()
-            .map { FishGroup(it.key, it.value.toBigInteger()) }.toMutableList()
+            .map { FishGroup(it.key, it.value.toBigInteger()) }
 
-        for (day in 1..days) {
-            fishGroups.addAll(getNewGroups(fishGroups))
-            fishGroups = compactGroups(fishGroups)
-            println("Day: $day; fishGroups: $fishGroups")
+        repeat(days) {
+            fishGroups.map { it.nextDay() }.flatten()
+                .groupBy { it.timer }.map { FishGroup(it.key, it.value.sumOf { group -> group.count }) }
+                .also { fishGroups = it }
         }
 
         return fishGroups.map { it.count }.sumOf { it }
