@@ -23,7 +23,7 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        return calc(input) { (1..it).sum() }
+        return calc(input) { it * (it + 1) / 2 }
     }
 
     // test if implementation meets criteria from the description, like:
