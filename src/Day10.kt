@@ -15,13 +15,9 @@ fun main() {
         for (inputBracket in it) {
             if (openToCloseBracket.containsKey(inputBracket)) {
                 stack.push(inputBracket)
-            } else {
-                if (inputBracket == openToCloseBracket[stack.peek()]) {
-                    stack.pop()
-                } else {
-                    firstInvalidBracket = inputBracket
-                    break
-                }
+            } else if (inputBracket != openToCloseBracket[stack.pop()]) {
+                firstInvalidBracket = inputBracket
+                break
             }
         }
         return ParseState(firstInvalidBracket, stack.toList())
@@ -40,7 +36,9 @@ fun main() {
         val sortedScores = convertInput(input)
             .map { parse(it) }
             .filter { it.firstInvalidBracket == null }
-            .map { parseState -> parseState.completionSequence.map { openToCloseBracket[it] }.map { bracketToScore2[it] } }
+            .map { parseState ->
+                parseState.completionSequence.map { openToCloseBracket[it] }.map { bracketToScore2[it] }
+            }
             .map { it.fold(0L) { acc, c -> acc * 5L + c!! } }
             .sorted().toList()
 
