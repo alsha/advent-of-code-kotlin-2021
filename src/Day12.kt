@@ -5,7 +5,6 @@ fun main() {
         val adjacentVertex = mutableMapOf<String, MutableList<String>>()
 
         fun addEdge(from: String, to: String) {
-            // Add v to u's list.
             var fromList = adjacentVertex[from]
             if (fromList == null) {
                 fromList = mutableListOf()
